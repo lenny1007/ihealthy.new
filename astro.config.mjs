@@ -7,6 +7,10 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://ihealthy.com.tw',
   integrations: [mdx(), sitemap()],
+  redirects: {
+    '/lutein-is-suffieciency/': '/lutein-is-sufficiency/',
+    '/how-to-prevent-or-sooth-wrinkles/': '/how-to-prevent-or-soothe-wrinkles/',
+  },
   vite: {
     plugins: [tailwindcss()],
   },
