@@ -1,0 +1,78 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const categoryLabels: Record<string, { name: string; emoji: string }> = {
+  'food-supplement': { name: '營養補充', emoji: '💊' },
+  'disorders': { name: '疾病症狀', emoji: '🩺' },
+  'diet': { name: '飲食營養', emoji: '🥗' },
+  'safety': { name: '安全防護', emoji: '🛡️' },
+  'beauty': { name: '美容保養', emoji: '✨' },
+  'safety-eat': { name: '飲食安全', emoji: '🍽️' },
+  'personal-clean': { name: '個人清潔', emoji: '🧴' },
+  'age-specific-health': { name: '年齡健康', emoji: '👶' },
+  'environmental-health': { name: '環境健康', emoji: '🌍' },
+  'chronic-disease': { name: '慢性疾病', emoji: '❤️' },
+  'low_priority': { name: '生活健康', emoji: '🏃' },
+  'medium_priority': { name: '健康知識', emoji: '📚' },
+};
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const categories = new Set<string>();
+  posts.forEach(post => {
+    if (post.data.category) categories.add(post.data.category);
+  });
+
+  return [...categories].map(category => ({
+    params: { category },
+    props: {
+      category,
+      posts: posts
+        .filter(p => p.data.category === category)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { category, posts } = Astro.props;
+const label = categoryLabels[category] || { name: category, emoji: '📄' };
+---
+
+<Layout title={`${label.emoji} ${label.name} | iHealthy 生機實驗室`} description={`瀏覽 iHealthy「${label.name}」分類下的所有文章`}>
+  <section class="py-8 md:py-12">
+    <a href="/categories/" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium mb-6 group">
+      <svg class="w-4 h-4 mr-1 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      所有分類
+    </a>
+    <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-2">
+      <span class="mr-2">{label.emoji}</span>{label.name}
+    </h1>
+    <p class="text-lg text-slate-500 mb-10">共 {posts.length} 篇文章</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {posts.map((post: any) => (
+        <a href={`/${post.slug}/`} class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div class="h-48 bg-slate-100 overflow-hidden relative">
+            {post.data.heroImage ? (
+              <img src={post.data.heroImage} alt={post.data.title} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center bg-blue-50 text-blue-200">
+                <span class="text-4xl text-blue-300">⚡</span>
+              </div>
+            )}
+          </div>
+          <div class="p-6 flex flex-col flex-1">
+            <h3 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-2">{post.data.title}</h3>
+            <p class="text-slate-600 mb-4 line-clamp-3 text-sm leading-relaxed flex-1">{post.data.description}</p>
+            <div class="mt-auto text-sm text-slate-400 font-medium">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric'})}
+              </time>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>

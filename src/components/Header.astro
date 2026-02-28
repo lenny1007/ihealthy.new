@@ -1,0 +1,76 @@
+---
+import { SITE_TITLE } from '../consts';
+import SearchBar from './SearchBar.astro';
+---
+
+<header class="fixed top-0 w-full z-50 transition-all duration-300" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+  <nav class="max-w-4xl mx-auto px-6 sm:px-8 h-16 flex items-center justify-between">
+    {/* Logo */}
+    <h2 class="text-xl font-bold tracking-tight text-slate-800 m-0 leading-none">
+      <a href="/" class="hover:text-blue-600 transition-colors flex items-center gap-2">
+        <span class="text-blue-500 text-2xl">⚡</span>
+        {SITE_TITLE}
+      </a>
+    </h2>
+
+    {/* Desktop Nav */}
+    <div class="hidden md:flex items-center gap-1">
+      <a href="/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all">首頁</a>
+      <a href="/articles/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all">文章</a>
+      <a href="/categories/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all">分類</a>
+      <button
+        id="desktop-search-btn"
+        class="ml-2 inline-flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 bg-slate-100 rounded-lg border border-slate-200 hover:border-blue-300 hover:text-blue-600 cursor-pointer transition-all"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        搜尋
+        <kbd class="hidden lg:inline text-xs text-slate-300 ml-1">⌘K</kbd>
+      </button>
+    </div>
+
+    {/* Mobile Buttons */}
+    <div class="flex md:hidden items-center gap-2">
+      <button id="mobile-search-btn" class="p-2 text-slate-500 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50" aria-label="搜尋">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </button>
+      <button id="hamburger-btn" class="p-2 text-slate-500 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50" aria-label="開啟選單" aria-expanded="false">
+        <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg id="close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  {/* Mobile Menu */}
+  <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/80" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);">
+    <div class="px-6 py-4 space-y-1">
+      <a href="/" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-all">🏠 首頁</a>
+      <a href="/articles/" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-all">📝 文章</a>
+      <a href="/categories/" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-all">📂 分類</a>
+    </div>
+  </div>
+</header>
+
+<SearchBar />
+
+<script>
+  // Hamburger menu
+  const hamburgerBtn = document.getElementById('hamburger-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const hamburgerIcon = document.getElementById('hamburger-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  hamburgerBtn?.addEventListener('click', () => {
+    const isOpen = mobileMenu?.classList.toggle('hidden');
+    hamburgerIcon?.classList.toggle('hidden');
+    closeIcon?.classList.toggle('hidden');
+    hamburgerBtn?.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  // Search buttons
+  document.getElementById('desktop-search-btn')?.addEventListener('click', () => {
+    (window as any).openSearch?.();
+  });
+  document.getElementById('mobile-search-btn')?.addEventListener('click', () => {
+    (window as any).openSearch?.();
+  });
+</script>

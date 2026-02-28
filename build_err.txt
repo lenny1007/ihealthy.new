@@ -1,0 +1,18 @@
+[31m[1m17:37:01[22m [ERROR] [vite][39m [31m✗[39m Build failed in 652ms
+[@mdx-js/rollup] Unexpected character `0` (U+0030) before name, expected a character that can start a name, such as a letter, `$`, or `_`
+file: C:/Users/USER/Desktop/ihealthy.new/src/content/blog/air-quality-health.mdx:77:40
+  [1mLocation:[22m
+    [4mC:/Users/USER/Desktop/ihealthy.new/src/content/blog/air-quality-health.mdx:77:40[24m
+  [1mStack trace:[22m
+[2m    at Object.transform (file:///C:/Users/USER/Desktop/ihealthy.new/node_modules/@astrojs/mdx/dist/vite-plugin-mdx.js:62:15)[22m
+
+---
+[2m17:37:00[22m [34m[content][39m Syncing content
+[2m17:37:00[22m [34m[content][39m Synced content
+[2m17:37:00[22m [34m[types][39m Generated [2m364ms[22m
+[2m17:37:00[22m [34m[build][39m output: [34m"static"[39m
+[2m17:37:00[22m [34m[build][39m mode: [34m"static"[39m
+[2m17:37:00[22m [34m[build][39m directory: [34mC:\Users\USER\Desktop\ihealthy.new\dist\[39m
+[2m17:37:00[22m [34m[build][39m Collecting build info...
+[2m17:37:00[22m [34m[build][39m [32m✓ Completed in 383ms.[39m
+[2m17:37:00[22m [34m[build][39m Building static entrypoints...

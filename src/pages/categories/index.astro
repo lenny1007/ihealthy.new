@@ -1,0 +1,60 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const categoryLabels: Record<string, { name: string; emoji: string; desc: string }> = {
+  'food-supplement': { name: '營養補充', emoji: '💊', desc: '維生素、礦物質與營養補充劑的科學指南' },
+  'disorders': { name: '疾病症狀', emoji: '🩺', desc: '常見疾病的預防、診斷與治療管理' },
+  'diet': { name: '飲食營養', emoji: '🥗', desc: '健康飲食法、營養學與減重策略' },
+  'safety': { name: '安全防護', emoji: '🛡️', desc: '環境安全、空氣品質與生活防護' },
+  'beauty': { name: '美容保養', emoji: '✨', desc: '皮膚護理、美容與外在保養指南' },
+  'safety-eat': { name: '飲食安全', emoji: '🍽️', desc: '食品安全、清洗方式與農藥殘留' },
+  'personal-clean': { name: '個人清潔', emoji: '🧴', desc: '口腔、臉部及個人衛生保養' },
+  'age-specific-health': { name: '年齡健康', emoji: '👶', desc: '兒童、孕婦與銀髮族的健康需求' },
+  'environmental-health': { name: '環境健康', emoji: '🌍', desc: '水質、空氣品質與環境因素' },
+  'chronic-disease': { name: '慢性疾病', emoji: '❤️', desc: '心臟病、糖尿病等慢性病管理' },
+  'low_priority': { name: '生活健康', emoji: '🏃', desc: '運動、壓力管理與日常保健' },
+  'medium_priority': { name: '健康知識', emoji: '📚', desc: '健康相關知識與實用資訊' },
+};
+
+const posts = await getCollection('blog');
+
+// Count articles per category
+const categoryCounts: Record<string, number> = {};
+posts.forEach(post => {
+  const cat = post.data.category || 'uncategorized';
+  categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+});
+
+// Sort by count descending
+const categories = Object.entries(categoryCounts)
+  .sort((a, b) => b[1] - a[1])
+  .map(([slug, count]) => ({
+    slug,
+    count,
+    ...(categoryLabels[slug] || { name: slug, emoji: '📄', desc: '' }),
+  }));
+---
+
+<Layout title="文章分類 | iHealthy 生機實驗室" description="按分類瀏覽 iHealthy 的所有健康知識文章">
+  <section class="py-8 md:py-12">
+    <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">文章分類</h1>
+    <p class="text-lg text-slate-500 mb-10">依照主題分類瀏覽，找到你感興趣的健康知識。</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {categories.map(cat => (
+        <a href={`/categories/${cat.slug}/`}
+          class="group block p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:scale-[1.02]">
+          <div class="text-3xl mb-3">{cat.emoji}</div>
+          <h2 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-1">
+            {cat.name}
+          </h2>
+          <p class="text-sm text-slate-500 mb-3 line-clamp-2">{cat.desc}</p>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">
+            {cat.count} 篇文章
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>

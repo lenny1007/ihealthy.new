@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import type { Page, GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = (await getCollection('blog'))
+    .filter(p => p.slug !== 'index')
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return paginate(posts, { pageSize: 12 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<Layout title={`所有文章${page.currentPage > 1 ? ` — 第 ${page.currentPage} 頁` : ''} | iHealthy 生機實驗室`} description="瀏覽 iHealthy 所有健康知識文章">
+  <section class="py-8 md:py-12">
+    <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-2">所有文章</h1>
+    <p class="text-lg text-slate-500 mb-10">共 {page.total} 篇文章，第 {page.currentPage} / {page.lastPage} 頁</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {page.data.map((post: any) => (
+        <a href={`/${post.slug}/`} class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div class="h-48 bg-slate-100 overflow-hidden relative">
+            {post.data.heroImage ? (
+              <img src={post.data.heroImage} alt={post.data.title} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center bg-blue-50">
+                <span class="text-4xl text-blue-300">⚡</span>
+              </div>
+            )}
+            {post.data.category && (
+              <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-blue-800 shadow-sm">
+                {post.data.category}
+              </span>
+            )}
+          </div>
+          <div class="p-6 flex flex-col flex-1">
+            <h3 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-2">{post.data.title}</h3>
+            <p class="text-slate-600 mb-4 line-clamp-3 text-sm leading-relaxed flex-1">{post.data.description}</p>
+            <div class="mt-auto text-sm text-slate-400 font-medium">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric'})}
+              </time>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    {/* Pagination */}
+    <nav class="mt-12 flex items-center justify-center gap-2" aria-label="分頁導覽">
+      {page.url.prev ? (
+        <a href={page.url.prev} class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:text-blue-600 transition-colors">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          上一頁
+        </a>
+      ) : (
+        <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-300 bg-slate-50 border border-slate-200 rounded-lg cursor-not-allowed">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          上一頁
+        </span>
+      )}
+
+      {Array.from({ length: page.lastPage }, (_, i) => i + 1).map(num => (
+        <a
+          href={num === 1 ? '/articles/' : `/articles/${num}/`}
+          class={`inline-flex items-center justify-center w-10 h-10 text-sm font-medium rounded-lg transition-colors ${
+            num === page.currentPage
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:text-blue-600'
+          }`}
+        >
+          {num}
+        </a>
+      ))}
+
+      {page.url.next ? (
+        <a href={page.url.next} class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 hover:text-blue-600 transition-colors">
+          下一頁
+          <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      ) : (
+        <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-300 bg-slate-50 border border-slate-200 rounded-lg cursor-not-allowed">
+          下一頁
+          <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </span>
+      )}
+    </nav>
+  </section>
+</Layout>

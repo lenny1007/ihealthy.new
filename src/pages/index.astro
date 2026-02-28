@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter(p => p.slug !== 'index')
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 12);
+---
+
+<Layout title="首頁 | iHealthy 生機實驗室" description="探索生機、飲食與健康的質感指南">
+  <section class="py-12 md:py-20 text-center">
+    <h1 class="text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+      探索<span class="text-blue-600">健康與飲食</span><br class="hidden md:block"/>的高質感知識庫
+    </h1>
+    <p class="text-xl text-slate-600 max-w-2xl mx-auto mb-10">
+      專為現代人打造，結合臨床數據、科學文獻與實用指南的深度內容。
+    </p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href="/articles/" class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all">
+        瀏覽全部文章
+        <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+      <a href="/categories/" class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white rounded-lg border border-slate-300 hover:border-blue-300 hover:text-blue-600 shadow-sm transition-all">
+        📂 按分類瀏覽
+      </a>
+    </div>
+  </section>
+  
+  <section class="mt-4">
+    <h2 class="text-2xl font-bold text-slate-900 mb-6">最新文章</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {posts.map((post) => (
+        <a href={`/${post.slug}/`} class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+          <div class="h-48 bg-slate-100 overflow-hidden relative">
+            {post.data.heroImage ? (
+              <img src={post.data.heroImage} alt={post.data.title} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center bg-blue-50 text-blue-200">
+                <span class="text-4xl text-blue-300">⚡</span>
+              </div>
+            )}
+            {post.data.category && (
+              <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-blue-800 shadow-sm">
+                {post.data.category}
+              </span>
+            )}
+          </div>
+          <div class="p-6 flex flex-col flex-1">
+            <h3 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 line-clamp-2">{post.data.title}</h3>
+            <p class="text-slate-600 mb-4 line-clamp-3 text-sm leading-relaxed flex-1">{post.data.description}</p>
+            <div class="mt-auto text-sm text-slate-400 font-medium">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric'})}
+              </time>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-10 text-center">
+      <a href="/articles/" class="inline-flex items-center px-6 py-3 text-sm font-semibold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all">
+        查看全部文章
+        <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+</Layout>
