@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "skills": {
+    "academic-researcher": {
+      "source": "Shubhamsaboo/awesome-llm-apps",
+      "sourceType": "github",
+      "computedHash": "73a461c6ca9d0d5d9fb66da78915f2500a92ed59874873f03beed4cfb7bdd281"
+    },
+    "brand-writer": {
+      "source": "zed-industries/zed",
+      "sourceType": "github",
+      "computedHash": "884c46bf933c546db7a166f45e96a29f28fad655f371e9e161dbae2609bdc756"
+    },
+    "content-creator": {
+      "source": "Shubhamsaboo/awesome-llm-apps",
+      "sourceType": "github",
+      "computedHash": "4c8c5eb0a945c3c50d845145fbe3d4347b599eb531cbeb154099276a4bb4a6b6"
+    },
+    "docs-writer": {
+      "source": "google-gemini/gemini-cli",
+      "sourceType": "github",
+      "computedHash": "057ca87855e723550a666d1afda4b42b90aeb972372e5877029b3ce1a8f8e488"
+    },
+    "humanizer": {
+      "source": "zed-industries/zed",
+      "sourceType": "github",
+      "computedHash": "49b713e902fba8463d005b95c7e04688dcddb4048809e062509d6b49dfc533d6"
+    }
+  }
+}

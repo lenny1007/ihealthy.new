@@ -1,6 +1,8 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
+import TableOfContents from '../components/TableOfContents.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -13,41 +15,103 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content } = await post.render();
+const { Content, headings } = await post.render();
+
+// Estimate reading time (assuming ~300 words per minute for Chinese/English mix)
+// A rough estimation based on character count of the raw body
+const wordCount = post.body.length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 300));
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
-  <article class="prose prose-slate prose-lg max-w-none prose-a:text-blue-600 hover:prose-a:text-blue-500 prose-img:rounded-xl">
-    <div class="mb-10 text-center">
+  <ReadingProgress targetSelector="#article-content" />
+  
+  <div class="max-w-4xl mx-auto mb-10 text-center px-4 sm:px-0 mt-8">
+    <div class="inline-flex items-center justify-center space-x-4 text-sm font-medium text-slate-500 mb-6 bg-slate-100/80 backdrop-blur-sm px-5 py-2 rounded-full border border-slate-200/60 shadow-sm">
+      <time datetime={post.data.pubDate.toISOString()} class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        {post.data.pubDate.toLocaleDateString('zh-TW', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
+      </time>
+      <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+      <span class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        閱讀時間約 {readingTime} 分鐘
+      </span>
+    </div>
+
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-900 via-slate-800 to-slate-600 mb-6 tracking-tight leading-tight [text-wrap:balance]">
+      {post.data.title}
+    </h1>
+    
+    {
+      post.data.heroImage && (
+        <div class="relative w-full rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/5 mb-12 aspect-[2/1] md:aspect-video group">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent z-10 pointer-events-none"></div>
+          <img 
+             width={1020} 
+             height={510} 
+             src={post.data.heroImage} 
+             alt={post.data.title} 
+             class="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105" 
+          />
+        </div>
+      )
+    }
+  </div>
+
+  <div class="relative flex flex-col xl:flex-row xl:gap-12 items-start max-w-7xl mx-auto">
+    {/* Main Content Area */}
+    <article id="article-content" class="w-full xl:w-[75%] max-w-4xl mx-auto bg-white p-6 sm:p-10 md:p-14 rounded-3xl shadow-sm border border-slate-100">
+      <div 
+        class="prose prose-slate md:prose-lg max-w-none 
+        prose-headings:font-black prose-headings:tracking-tight prose-headings:text-slate-900
+        prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
+        prose-p:text-slate-700 prose-p:leading-relaxed
+        prose-a:text-blue-600 prose-a:underline prose-a:underline-offset-4 prose-a:decoration-blue-300 hover:prose-a:decoration-blue-600 prose-a:transition-colors
+        prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50/50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-slate-800 prose-blockquote:shadow-sm
+        prose-strong:text-slate-900 prose-strong:font-bold
+        prose-img:rounded-2xl prose-img:shadow-lg prose-img:border prose-img:border-slate-100
+        prose-table:border-collapse prose-table:w-full prose-table:rounded-xl prose-table:overflow-hidden prose-table:shadow-sm
+        prose-th:bg-slate-100 prose-th:px-5 prose-th:py-4 prose-th:text-left prose-th:font-bold prose-th:text-slate-700
+        prose-td:px-5 prose-td:py-3 prose-tr:border-b prose-tr:border-slate-200 last:prose-tr:border-b-0
+        prose-code:bg-slate-100 prose-code:text-rose-600 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:font-mono prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+        prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-pre:rounded-xl prose-pre:shadow-inner
+        prose-li:marker:text-blue-500
+        prose-hr:border-slate-200 prose-hr:my-10"
+      >
+        <Content />
+      </div>
+
+      {/* Footer Info inside article */}
       {
-        post.data.heroImage && (
-          <img width={1020} height={510} src={post.data.heroImage} alt={post.data.title} class="w-full rounded-2xl shadow-lg mb-8 aspect-video object-cover" />
-        )
-      }
-      <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">{post.data.title}</h1>
-      <p class="text-lg text-slate-500 font-medium">
-        <time datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toLocaleDateString('zh-TW', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })}
-        </time>
-        {
-          post.data.updatedDate && (
-           <span class="italic ml-2">(最後更新: {
+        post.data.updatedDate && (
+          <div class="mt-12 pt-8 border-t border-slate-100 text-sm text-slate-500 flex items-center justify-end font-medium">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            最後更新於 {
               post.data.updatedDate.toLocaleDateString('zh-TW', {
                 year: 'numeric',
-                month: 'short',
+                month: 'long',
                 day: 'numeric',
               })
-            })</span>
-          )
-        }
-      </p>
-    </div>
-    <div class="mt-8 pt-8 border-t border-slate-200">
-      <Content />
-    </div>
-  </article>
+            }
+          </div>
+        )
+      }
+    </article>
+
+    {/* Sidebar Area (TOC) */}
+    <aside class="w-full xl:w-[25%] hidden xl:block shrink-0">
+      <TableOfContents headings={headings} />
+    </aside>
+  </div>
 </Layout>

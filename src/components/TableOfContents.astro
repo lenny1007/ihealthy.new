@@ -1,0 +1,124 @@
+---
+export interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+
+// Filter to only include h2 and h3 for the TOC
+const filteredHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+
+if (filteredHeadings.length === 0) {
+  return null; // Return nothing if no headings
+}
+---
+
+<nav aria-label="Table of Contents" class="toc-container hidden xl:block sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pr-4">
+  <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-l-4 border-blue-500 pl-3">
+    文章目錄
+  </h2>
+  <ul class="space-y-2.5 text-sm">
+    {
+      filteredHeadings.map((heading) => (
+        <li class={`${heading.depth === 3 ? 'ml-4' : ''}`}>
+          <a
+            href={`#${heading.slug}`}
+            class="toc-link block text-slate-500 hover:text-blue-600 transition-colors duration-200 line-clamp-2"
+            data-slug={heading.slug}
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  // Script to highlight active TOC item based on scroll position
+  document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -60% 0px', // Trigger when heading passes 60% from top
+      threshold: 1.0,
+    };
+
+    const tocLinks = document.querySelectorAll('.toc-link');
+    const headingElements = Array.from(document.querySelectorAll('h2[id], h3[id]'));
+    
+    if (headingElements.length === 0 || tocLinks.length === 0) return;
+
+    let activeIndex = -1;
+
+    const highlightTocItem = () => {
+      // Find the last heading that is above the middle of the viewport
+      const scrollPosition = window.scrollY + window.innerHeight * 0.4; // Offset to consider "active"
+      
+      let newActiveIndex = -1;
+      
+      for (let i = 0; i < headingElements.length; i++) {
+        const heading = headingElements[i] as HTMLElement;
+        const offsetTop = heading.offsetTop;
+        
+        if (offsetTop <= scrollPosition) {
+          newActiveIndex = i;
+        } else {
+          break; // Headings are in order, so we can stop looking
+        }
+      }
+
+      // If we found a new active item and it's different from the current one
+      if (newActiveIndex !== activeIndex && newActiveIndex !== -1) {
+        // Remove active class from all
+        tocLinks.forEach(link => {
+          link.classList.remove('text-blue-600', 'font-semibold', 'translate-x-1');
+          link.classList.add('text-slate-500');
+        });
+
+        // Add active class to the current one
+        const activeId = headingElements[newActiveIndex].id;
+        const activeLink = document.querySelector(`.toc-link[data-slug="${activeId}"]`) as HTMLElement;
+        
+        if (activeLink) {
+          activeLink.classList.remove('text-slate-500');
+          activeLink.classList.add('text-blue-600', 'font-semibold', 'translate-x-1');
+        }
+        
+        activeIndex = newActiveIndex;
+      }
+    };
+
+    // Use requestAnimationFrame for smooth performance during scroll
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          highlightTocItem();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Initial highlight
+    highlightTocItem();
+  });
+</script>
+
+<style>
+  .toc-container {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+  .toc-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  .toc-container::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+  }
+  .toc-link {
+    transform: translateX(0);
+    will-change: transform, color;
+  }
+</style>
