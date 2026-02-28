@@ -1,0 +1,30 @@
+---
+// src/components/mdx/StepPanel.astro
+export interface Props {
+  step: string | number;
+  title: string;
+  theme?: 'blue' | 'orange' | 'red' | 'green';
+}
+
+const { step, title, theme = 'blue' } = Astro.props;
+
+const themes = {
+  blue: { bg: 'bg-slate-50 border-blue-200', tagBg: 'bg-slate-500', tagText: 'text-white', titleColor: 'text-slate-800' },
+  orange: { bg: 'bg-orange-50 border-orange-200', tagBg: 'bg-orange-500', tagText: 'text-white', titleColor: 'text-orange-900' },
+  red: { bg: 'bg-rose-50 border-rose-200', tagBg: 'bg-rose-500', tagText: 'text-white', titleColor: 'text-rose-900' },
+  green: { bg: 'bg-emerald-50 border-emerald-200', tagBg: 'bg-emerald-500', tagText: 'text-white', titleColor: 'text-emerald-900' }
+};
+
+const currentTheme = themes[theme] || themes.blue;
+---
+<div class={`flex flex-col border-l-4 p-5 rounded-r-xl mb-4 not-prose ${currentTheme.bg} transition-colors duration-200 shadow-sm`}>
+  <div class="flex items-center gap-3 mb-2">
+    <span class={`text-[0.7rem] leading-none uppercase tracking-wider font-extrabold px-2.5 py-1 rounded-[4px] shadow-sm ${currentTheme.tagBg} ${currentTheme.tagText}`}>
+      Step {step}
+    </span>
+    <h4 class={`font-black text-[1.05rem] ${currentTheme.titleColor}`}>{title}</h4>
+  </div>
+  <div class="text-slate-600 text-[0.95rem] leading-relaxed">
+    <slot />
+  </div>
+</div>

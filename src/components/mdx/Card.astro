@@ -1,0 +1,33 @@
+---
+// src/components/mdx/Card.astro
+export interface Props {
+  title: string;
+  icon?: string;
+  type?: 'danger' | 'warning' | 'info' | 'success';
+}
+
+const { title, icon, type = 'info' } = Astro.props;
+
+const bgColors = {
+  danger: 'bg-rose-50 border-rose-100',
+  warning: 'bg-amber-50 border-amber-100',
+  info: 'bg-blue-50 border-blue-100',
+  success: 'bg-emerald-50 border-emerald-100'
+};
+
+const titleColors = {
+  danger: 'text-rose-800',
+  warning: 'text-amber-800',
+  info: 'text-blue-800',
+  success: 'text-emerald-800'
+};
+---
+<div class={`rounded-2xl p-6 border ${bgColors[type]} shadow-sm flex flex-col h-full`}>
+  <h4 class={`text-[1.1rem] font-black mb-4 flex items-center gap-2 ${titleColors[type]}`}>
+    {icon && <span class="text-xl">{icon}</span>}
+    {title}
+  </h4>
+  <div class="text-slate-700 text-sm leading-relaxed space-y-4 flex-grow">
+    <slot />
+  </div>
+</div>

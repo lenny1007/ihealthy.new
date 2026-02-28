@@ -4,6 +4,13 @@ import Layout from '../layouts/Layout.astro';
 import ReadingProgress from '../components/ReadingProgress.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 
+import CardGroup from '../components/mdx/CardGroup.astro';
+import Card from '../components/mdx/Card.astro';
+import Simulation from '../components/mdx/Simulation.astro';
+import StepPanel from '../components/mdx/StepPanel.astro';
+import Takeaway from '../components/mdx/Takeaway.astro';
+import TakeawayItem from '../components/mdx/TakeawayItem.astro';
+
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
@@ -87,7 +94,7 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 300));
         prose-li:marker:text-blue-500
         prose-hr:border-slate-200 prose-hr:my-10"
       >
-        <Content />
+        <Content components={{ CardGroup, Card, Simulation, StepPanel, Takeaway, TakeawayItem }} />
       </div>
 
       {/* Footer Info inside article */}

@@ -1,0 +1,17 @@
+---
+// src/components/mdx/Simulation.astro
+export interface Props {
+  title?: string;
+  icon?: string;
+}
+
+const { title = "情境模擬", icon = "💀" } = Astro.props;
+---
+<div class="mt-4 bg-white/60 p-4 rounded-xl text-sm border border-slate-900/5 shadow-inner">
+  <div class="font-bold flex items-center gap-2 mb-1.5 text-slate-800">
+    <span>{icon}</span> {title}：
+  </div>
+  <div class="text-slate-600 leading-relaxed">
+    <slot />
+  </div>
+</div>
