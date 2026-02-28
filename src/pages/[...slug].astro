@@ -10,6 +10,8 @@ import Simulation from '../components/mdx/Simulation.astro';
 import StepPanel from '../components/mdx/StepPanel.astro';
 import Takeaway from '../components/mdx/Takeaway.astro';
 import TakeawayItem from '../components/mdx/TakeawayItem.astro';
+import Callout from '../components/mdx/Callout.astro';
+import DataTable from '../components/mdx/DataTable.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -81,6 +83,8 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 300));
         class="prose prose-slate md:prose-lg max-w-none 
         prose-headings:font-black prose-headings:tracking-tight prose-headings:text-slate-900
         prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
+        prose-h2:border-b-2 prose-h2:border-slate-200 prose-h2:pb-3 prose-h2:mt-14 prose-h2:mb-6 prose-h2:-ml-4 prose-h2:pl-4 prose-h2:border-l-4 prose-h2:border-l-blue-500
+        prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-slate-800
         prose-p:text-slate-700 prose-p:leading-relaxed
         prose-a:text-blue-600 prose-a:underline prose-a:underline-offset-4 prose-a:decoration-blue-300 hover:prose-a:decoration-blue-600 prose-a:transition-colors
         prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50/50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-slate-800 prose-blockquote:shadow-sm
@@ -94,7 +98,7 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 300));
         prose-li:marker:text-blue-500
         prose-hr:border-slate-200 prose-hr:my-10"
       >
-        <Content components={{ CardGroup, Card, Simulation, StepPanel, Takeaway, TakeawayItem }} />
+        <Content components={{ CardGroup, Card, Simulation, StepPanel, Takeaway, TakeawayItem, Callout, DataTable }} />
       </div>
 
       {/* Footer Info inside article */}

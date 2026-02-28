@@ -1,0 +1,24 @@
+---
+interface Props {
+  title?: string;
+  icon?: string;
+}
+
+const { title, icon = "💡" } = Astro.props;
+---
+
+<div class="my-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 p-6 shadow-sm flex flex-col sm:flex-row gap-4 items-start break-inside-avoid">
+  <div class="shrink-0 text-2xl bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-sm border border-emerald-100/50">
+    {icon}
+  </div>
+  <div class="flex-1 w-full">
+    {title && (
+      <h4 class="text-emerald-800 font-black text-lg m-0 !mt-0 !mb-2 flex items-center leading-tight">
+        {title}
+      </h4>
+    )}
+    <div class="text-emerald-900/80 leading-relaxed text-base prose-p:!my-0 prose-ul:!my-0 prose-ol:!my-0 [&>*:not(:first-child)]:mt-3">
+      <slot />
+    </div>
+  </div>
+</div>
