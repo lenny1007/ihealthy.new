@@ -55,10 +55,13 @@
 
 專案已針對 FCP、LCP 做以下調整：
 
-- **字型**：Google Fonts 改為非阻塞載入（`media="print"` + `onload`），並只載入常用字重（400、600、700），減少首次繪製延遲。
-- **首頁 LCP 圖片**：首屏第一張文章卡圖會透過 Layout 的 `lcpImage` 傳入並在 `<head>` 預載（`<link rel="preload" as="image">`）；前兩張圖設為 `fetchpriority="high"`、`loading="eager"`，其餘 `loading="lazy"`。
+- **字型**：不再載入 Google Fonts，改用系統字型（`system-ui`、`Microsoft JhengHei` 等），避免任何字型請求拖慢 FCP。
+- **關鍵 CSS**：在 `Layout.astro` 的 `<head>` 內聯最小關鍵樣式（body、main），讓首屏可立即繪製，不等待完整樣式檔。
+- **主樣式表非阻塞**：建置後腳本 `scripts/postbuild-nonblocking-css.mjs` 會將首個 `<link rel="stylesheet">` 改為 `media="print"` + `onload="this.media='all'"`，完整 CSS 非阻塞載入；無 JS 時由 `<noscript>`  fallback 載入。
+- **首頁 LCP 圖片**：首屏第一張文章卡圖透過 Layout 的 `lcpImage` 在 `<head>` 預載；前兩張圖設為 `fetchpriority="high"`、`loading="eager"`，其餘 `loading="lazy"`。
 - **文章頁**：內文 hero 圖設為 `fetchpriority="high"`、`loading="eager"`，有利 LCP。
 - **列表頁**（所有文章、分類）：前兩張圖高優先、其餘 lazy，並加上 `width`/`height` 與 `decoding="async"`。
+- **Analytics**：Vercel Analytics 延遲至 `window.load` 後執行，避免與關鍵資源搶頻寬。
 - **快取**：`vercel.json` 對 `/med_images/*`、`/_astro/*` 設定長期快取（1 年），再次造訪會更快。
 
 部署後建議用 [PageSpeed Insights](https://pagespeed.web.dev/) 再測一次（尤其是行動裝置）；若主機在亞洲，可考慮 Vercel 的 Edge Network 或自訂 region。

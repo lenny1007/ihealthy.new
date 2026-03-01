@@ -11,12 +11,11 @@ const { title, description, lcpImage } = Astro.props;
 <html lang="zh-TW" class="scroll-smooth">
   <head>
     <BaseHead title={title} description={description} />
-    <!-- 字型非阻塞載入，避免拖慢 FCP/LCP -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap" as="style">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    <!-- 關鍵 CSS 內聯，避免 FCP 等待完整樣式 -->
+    <style is:inline>
+      body{background:#f8fafc;color:#1e293b;margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif}
+      main{min-height:100vh;padding-top:6rem;padding-bottom:3rem;padding-left:1.5rem;padding-right:1.5rem;max-width:1280px;margin-left:auto;margin-right:auto}
+    </style>
     {lcpImage && <link rel="preload" href={lcpImage} as="image" />}
   </head>
   <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-blue-200">
@@ -28,7 +27,7 @@ const { title, description, lcpImage } = Astro.props;
     <SpeedInsights />
     <script>
       import { inject } from '@vercel/analytics';
-      inject();
+      if (document.readyState === 'complete') inject(); else window.addEventListener('load', function () { inject(); });
     </script>
   </body>
 </html>
