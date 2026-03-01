@@ -2,18 +2,23 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { Analytics } from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 
-const { title, description } = Astro.props;
+const { title, description, lcpImage } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="zh-TW" class="scroll-smooth">
   <head>
     <BaseHead title={title} description={description} />
+    <!-- 字型非阻塞載入，避免拖慢 FCP/LCP -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap" as="style">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+    {lcpImage && <link rel="preload" href={lcpImage} as="image" />}
   </head>
   <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-blue-200">
     <Header />
@@ -21,6 +26,7 @@ const { title, description } = Astro.props;
       <slot />
     </main>
     <Footer />
+    <Analytics />
     <SpeedInsights />
   </body>
 </html>
