@@ -13,10 +13,10 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page } = Astro.props;
 ---
 
-<Layout title={`所有文章${page.currentPage > 1 ? ` — 第 ${page.currentPage} 頁` : ''} | iHealthy 生機實驗室`} description="瀏覽 iHealthy 所有健康知識文章">
+<Layout title={`所有文章${page.currentPage > 1 ? ` — 第 ${page.currentPage} 頁` : ''} | iHealthy 生機實驗室`} description="實證健康文章：飲食、保養、疾病照護，每篇附參考文獻與實用提醒。">
   <section class="py-8 md:py-12">
     <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-2">所有文章</h1>
-    <p class="text-lg text-slate-500 mb-10">共 {page.total} 篇文章，第 {page.currentPage} / {page.lastPage} 頁</p>
+    <p class="text-lg text-slate-500 mb-10">共 {page.total} 篇實證健康文章，第 {page.currentPage} / {page.lastPage} 頁</p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       {page.data.map((post: any) => (

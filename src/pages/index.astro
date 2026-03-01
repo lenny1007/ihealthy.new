@@ -8,13 +8,13 @@ const posts = (await getCollection('blog'))
   .slice(0, 12);
 ---
 
-<Layout title="首頁 | iHealthy 生機實驗室" description="探索生機、飲食與健康的質感指南">
+<Layout title="首頁 | iHealthy 生機實驗室" description="實證健康知識站：飲食、保養、慢性病照護，用白話文說給你聽。">
   <section class="py-12 md:py-20 text-center">
     <h1 class="text-5xl font-black text-slate-900 tracking-tight leading-tight mb-6">
-      探索<span class="text-blue-600">健康與飲食</span><br class="hidden md:block"/>的高質感知識庫
+      健康大小事，<span class="text-blue-600">用科學說給你聽</span>
     </h1>
     <p class="text-xl text-slate-600 max-w-2xl mx-auto mb-10">
-      專為現代人打造，結合臨床數據、科學文獻與實用指南的深度內容。
+      每篇文章都有文獻依據，加上「誰不適合」「實用提醒」，讓你讀得懂、也做得到。
     </p>
     <div class="flex flex-wrap justify-center gap-3">
       <a href="/articles/" class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all">
@@ -28,7 +28,7 @@ const posts = (await getCollection('blog'))
   </section>
   
   <section class="mt-4">
-    <h2 class="text-2xl font-bold text-slate-900 mb-6">最新文章</h2>
+    <h2 class="text-2xl font-bold text-slate-900 mb-6">最新健康文章</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       {posts.map((post) => (
         <a href={`/${post.slug}/`} class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">

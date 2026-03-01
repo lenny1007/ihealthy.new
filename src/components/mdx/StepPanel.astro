@@ -17,14 +17,17 @@ const themes = {
 
 const currentTheme = themes[theme] || themes.blue;
 ---
-<div class={`flex flex-col border-l-4 p-5 rounded-r-xl mb-4 not-prose ${currentTheme.bg} transition-colors duration-200 shadow-sm`}>
-  <div class="flex items-center gap-3 mb-2">
-    <span class={`text-[0.7rem] leading-none uppercase tracking-wider font-extrabold px-2.5 py-1 rounded-[4px] shadow-sm ${currentTheme.tagBg} ${currentTheme.tagText}`}>
-      Step {step}
-    </span>
-    <h4 class={`font-black text-[1.05rem] ${currentTheme.titleColor}`}>{title}</h4>
-  </div>
-  <div class="text-slate-600 text-[0.95rem] leading-relaxed">
-    <slot />
+<div class={`flex not-prose rounded-r-xl mb-6 overflow-hidden transition-colors duration-200 shadow-md border border-slate-200/80 ${currentTheme.bg}`}>
+  <div class={`w-1.5 min-h-full shrink-0 ${currentTheme.tagBg}`} aria-hidden="true" />
+  <div class="flex flex-col p-5 flex-1">
+    <div class="flex items-center gap-3 mb-2">
+      <span class={`text-[0.7rem] leading-none uppercase tracking-wider font-extrabold px-2.5 py-1 rounded-[4px] shadow-sm ${currentTheme.tagBg} ${currentTheme.tagText}`}>
+        Step {step}
+      </span>
+      <h4 class={`font-black text-[1.05rem] ${currentTheme.titleColor}`}>{title}</h4>
+    </div>
+    <div class="text-slate-600 text-[0.95rem] leading-relaxed">
+      <slot />
+    </div>
   </div>
 </div>
