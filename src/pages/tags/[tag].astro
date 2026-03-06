@@ -43,7 +43,10 @@ const { posts, tagName } = Astro.props;
                 <Image
                   src={post.data.heroImage}
                   alt={post.data.title}
-                  width={400}
+                  widths={[360, 720]}
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  decoding="async"
+                  loading="lazy"
                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               ) : (

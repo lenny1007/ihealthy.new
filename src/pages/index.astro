@@ -38,7 +38,8 @@ const posts = (await getCollection('blog'))
               <Image
                 src={post.data.heroImage}
                 alt={post.data.title}
-                width={400}
+                widths={[360, 720]}
+                sizes="(max-width: 768px) 100vw, 400px"
                 decoding="async"
                 fetchpriority={i < 2 ? 'high' : undefined}
                 loading={i < 2 ? 'eager' : 'lazy'}
