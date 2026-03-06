@@ -44,7 +44,7 @@ GOOGLE_IMAGEN_MODEL = "gemini-3.1-flash-image-preview"
 # Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
-HERO_IMG_DIR = os.path.join(PROJECT_ROOT, "public", "med_images")
+HERO_IMG_DIR = os.path.join(PROJECT_ROOT, "src", "assets", "med_images")
 os.makedirs(HERO_IMG_DIR, exist_ok=True)
 
 
@@ -167,7 +167,7 @@ def main():
     slug = os.path.basename(filepath).replace(".mdx", "").replace(".md", "")
     filename = f"{slug}-hero.png"
     save_path = os.path.join(HERO_IMG_DIR, filename)
-    mdx_inject_path = f"/med_images/{filename}"
+    mdx_inject_path = f"../../assets/med_images/{filename}"
     
     hero_prompt = generate_hero_prompt(title, desc, anthropic_key)
     

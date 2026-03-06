@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  
+  // Extract unique tags
+  const uniqueTags = [...new Set(allPosts.flatMap((post) => post.data.tags || []).filter(Boolean))];
+
+  return uniqueTags.map((tag) => {
+    const filteredPosts = allPosts.filter((post) => post.data.tags?.includes(tag));
+    const safeSlug = tag.replace(/[:\/\\?*|"<>\s]/g, '-').toLowerCase();
+    return {
+      params: { tag: safeSlug },
+      props: { posts: filteredPosts, tagName: tag },
+    };
+  });
+}
+
+const { tag } = Astro.params;
+const { posts, tagName } = Astro.props;
+---
+
+<Layout title={`標籤：${tagName} | iHealthy 生機實驗室`} description={`所有包含「${tagName}」標籤的健康知識文章總覽。`}>
+  <div class="max-w-5xl mx-auto py-12 px-6">
+    <div class="mb-12 text-center mt-8">
+      <p class="text-blue-500 font-bold mb-3 uppercase tracking-widest text-sm">Tag Overview</p>
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-slate-100 mb-6 inline-flex flex-wrap justify-center items-center gap-3">
+        主題標籤：
+        <span class="text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 px-5 py-2 rounded-2xl border border-blue-100 dark:border-slate-700 max-w-full break-all leading-tight">#{tagName}</span>
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400 text-lg font-medium">為您找到 {posts.length} 篇相關深度文章</p>
+    </div>
+
+    {posts.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map(post => (
+          <a href={`/${post.slug}/`} class="group flex flex-col bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="h-48 bg-slate-100 dark:bg-slate-900 overflow-hidden relative">
+              {post.data.heroImage ? (
+                <Image
+                  src={post.data.heroImage}
+                  alt={post.data.title}
+                  width={400}
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div class="w-full h-full flex items-center justify-center bg-blue-50 text-blue-200">
+                  <span class="text-4xl text-blue-300">⚡</span>
+                </div>
+              )}
+              {post.data.category && (
+                <span class="absolute top-4 left-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-blue-800 dark:text-blue-300 shadow-sm">
+                  {post.data.category}
+                </span>
+              )}
+            </div>
+            <div class="p-6 flex flex-col flex-1">
+              <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2 line-clamp-2">{post.data.title}</h3>
+              <p class="text-slate-600 dark:text-slate-400 mb-4 line-clamp-2 text-sm leading-relaxed flex-1">{post.data.description}</p>
+              <div class="mt-auto text-sm text-slate-400 font-medium pt-4 border-t border-slate-50 dark:border-slate-700 flex items-center justify-between">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {post.data.pubDate.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric'})}
+                </time>
+                <div class="text-blue-500 dark:text-blue-400 text-xs font-bold group-hover:translate-x-1 transition-transform">閱讀 &rarr;</div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-300 max-w-2xl mx-auto">
+        <span class="text-5xl block mb-4">🍃</span>
+        <h3 class="text-xl font-bold text-slate-700 mb-2">目前尚無文章</h3>
+        <p class="text-slate-500">此標籤下暫時沒有任何已發布的內容。</p>
+        <a href="/categories/" class="inline-block mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">瀏覽其他分類</a>
+      </div>
+    )}
+  </div>
+</Layout>

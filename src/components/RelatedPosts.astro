@@ -1,0 +1,85 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+
+interface Props {
+  currentPost: CollectionEntry<'blog'>;
+  maxPosts?: number;
+}
+
+const { currentPost, maxPosts = 3 } = Astro.props;
+
+// Get all posts except the current one and the index block
+const allPosts = await getCollection('blog');
+const otherPosts = allPosts.filter(
+  (post) => post.slug !== currentPost.slug && post.slug !== 'index'
+);
+
+// Basic recommendation logic: matching categories or tags
+// Score: +2 for same category, +1 for each shared tag
+const scoredPosts = otherPosts.map(post => {
+  let score = 0;
+  if (currentPost.data.category && post.data.category === currentPost.data.category) {
+    score += 2;
+  }
+  
+  if (currentPost.data.tags && post.data.tags) {
+    const sharedTags = currentPost.data.tags.filter(tag => post.data.tags?.includes(tag));
+    score += sharedTags.length;
+  }
+  
+  return { post, score };
+}).sort((a, b) => {
+  // Sort by highest score first
+  if (b.score !== a.score) return b.score - a.score;
+  // Tie breaker: newest first
+  return b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf();
+});
+
+// Take the top N scoring posts
+const relatedPosts = scoredPosts.slice(0, maxPosts).map(sp => sp.post);
+---
+
+{relatedPosts.length > 0 && (
+  <section class="mt-16 pt-10 border-t border-slate-200 dark:border-slate-800">
+    <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6 flex items-center">
+      <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H14"/>
+      </svg>
+      自動推薦：你可能也會滿意
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      {relatedPosts.map(post => (
+        <a href={`/${post.slug}/`} class="group flex flex-col bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+          <div class="h-32 bg-slate-100 dark:bg-slate-900 overflow-hidden relative">
+            {post.data.heroImage ? (
+              <Image
+                src={post.data.heroImage}
+                alt={post.data.title}
+                width={300}
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center bg-blue-50 text-blue-200">
+                <span class="text-2xl">⚡</span>
+              </div>
+            )}
+            {post.data.category && (
+              <span class="absolute top-2 left-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-bold text-blue-800 dark:text-blue-300 shadow-sm">
+                {post.data.category}
+              </span>
+            )}
+          </div>
+          <div class="p-4 flex flex-col flex-1">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2 line-clamp-2 leading-snug">{post.data.title}</h3>
+            <div class="mt-auto text-xs text-slate-500 dark:text-slate-400 font-medium pt-2">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric'})}
+              </time>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+)}

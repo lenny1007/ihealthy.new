@@ -46,8 +46,8 @@ GOOGLE_IMAGEN_MODEL = "gemini-3.1-flash-image-preview"
 # Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
-PUBLIC_IMG_DIR = os.path.join(PROJECT_ROOT, "public", "images", "blog")
-os.makedirs(PUBLIC_IMG_DIR, exist_ok=True)
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "src", "assets", "images", "blog")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def extract_headings(content: str) -> list:
@@ -173,13 +173,13 @@ def process_images_parallel(heading_prompts: dict, google_api_key: str, article_
     def _dl(heading, prompt):
         print(f"  🖼  Generating image for: [{heading}]...")
         filename = f"{article_prefix}_{generate_random_id()}.webp"
-        filepath = os.path.join(PUBLIC_IMG_DIR, filename)
+        filepath = os.path.join(OUTPUT_DIR, filename)
         
         ok = generate_google_image(prompt, filepath, client)
         if ok:
             print(f"      ✅ Saved: {filename}")
             # The markdown public path
-            md_path = f"/images/blog/{filename}"
+            md_path = f"../../assets/images/blog/{filename}"
             with lock:
                 result_map[heading] = md_path
 

@@ -3,11 +3,11 @@ import { SITE_TITLE } from '../consts';
 import SearchBar from './SearchBar.astro';
 ---
 
-<header class="fixed top-0 w-full z-50 transition-all duration-300" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+<header class="fixed top-0 w-full z-50 transition-all duration-300 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
   <nav class="max-w-4xl mx-auto px-6 sm:px-8 h-16 flex items-center justify-between">
     {/* Logo */}
-    <h2 class="text-xl font-bold tracking-tight text-slate-800 m-0 leading-none">
-      <a href="/" class="hover:text-blue-600 transition-colors flex items-center gap-2">
+    <h2 class="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100 m-0 leading-none">
+      <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2">
         <span class="text-blue-500 text-2xl">⚡</span>
         {SITE_TITLE}
       </a>
@@ -15,22 +15,30 @@ import SearchBar from './SearchBar.astro';
 
     {/* Desktop Nav */}
     <div class="hidden md:flex items-center gap-1">
-      <a href="/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all">首頁</a>
-      <a href="/articles/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all">文章</a>
-      <a href="/categories/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all">分類</a>
+      <a href="/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all">首頁</a>
+      <a href="/articles/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all">文章</a>
+      <a href="/categories/" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all">分類</a>
       <button
         id="desktop-search-btn"
-        class="ml-2 inline-flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 bg-slate-100 rounded-lg border border-slate-200 hover:border-blue-300 hover:text-blue-600 cursor-pointer transition-all"
+        class="ml-2 inline-flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-all"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         搜尋
-        <kbd class="hidden lg:inline text-xs text-slate-300 ml-1">⌘K</kbd>
+        <kbd class="hidden lg:inline text-xs text-slate-300 dark:text-slate-600 ml-1">⌘K</kbd>
+      </button>
+      <button id="theme-toggle-desktop" class="ml-2 p-2 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800" aria-label="切換深淺模式">
+        <svg id="theme-toggle-dark-icon-desktop" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+        <svg id="theme-toggle-light-icon-desktop" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 4.22a1 1 0 011.415 0l.708.707a1 1 0 01-1.414 1.414l-.708-.707a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-4.22 4.22a1 1 0 010 1.415l-.707.708a1 1 0 01-1.414-1.414l.707-.708a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-4.22a1 1 0 01-1.415 0l-.708-.707a1 1 0 011.414-1.414l.708.707a1 1 0 010 1.414zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zm4.22-4.22a1 1 0 010-1.415l.707-.708a1 1 0 011.414 1.414l-.707.708a1 1 0 01-1.415 0z"></path></svg>
       </button>
     </div>
 
     {/* Mobile Buttons */}
-    <div class="flex md:hidden items-center gap-2">
-      <button id="mobile-search-btn" class="p-2 text-slate-500 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50" aria-label="搜尋">
+    <div class="flex md:hidden items-center gap-1">
+      <button id="theme-toggle-mobile" class="p-2 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg" aria-label="切換深淺模式">
+        <svg id="theme-toggle-dark-icon-mobile" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+        <svg id="theme-toggle-light-icon-mobile" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 4.22a1 1 0 011.415 0l.708.707a1 1 0 01-1.414 1.414l-.708-.707a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-4.22 4.22a1 1 0 010 1.415l-.707.708a1 1 0 01-1.414-1.414l.707-.708a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-4.22a1 1 0 01-1.415 0l-.708-.707a1 1 0 011.414-1.414l.708.707a1 1 0 010 1.414zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zm4.22-4.22a1 1 0 010-1.415l.707-.708a1 1 0 011.414 1.414l-.707.708a1 1 0 01-1.415 0z"></path></svg>
+      </button>
+      <button id="mobile-search-btn" class="p-2 text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50 dark:hover:bg-slate-800" aria-label="搜尋">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
       </button>
       <button id="hamburger-btn" class="p-2 text-slate-500 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50" aria-label="開啟選單" aria-expanded="false">
@@ -72,5 +80,31 @@ import SearchBar from './SearchBar.astro';
   });
   document.getElementById('mobile-search-btn')?.addEventListener('click', () => {
     (window as any).openSearch?.();
+  });
+
+  // Dark Mode Toggle Logic
+  const themeToggleDarkIcons = document.querySelectorAll('#theme-toggle-dark-icon-desktop, #theme-toggle-dark-icon-mobile');
+  const themeToggleLightIcons = document.querySelectorAll('#theme-toggle-light-icon-desktop, #theme-toggle-light-icon-mobile');
+  const themeToggleBtns = document.querySelectorAll('#theme-toggle-desktop, #theme-toggle-mobile');
+
+  if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      themeToggleLightIcons.forEach(icon => icon.classList.remove('hidden'));
+  } else {
+      themeToggleDarkIcons.forEach(icon => icon.classList.remove('hidden'));
+  }
+
+  themeToggleBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+        themeToggleDarkIcons.forEach(icon => icon.classList.toggle('hidden'));
+        themeToggleLightIcons.forEach(icon => icon.classList.toggle('hidden'));
+
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
   });
 </script>
