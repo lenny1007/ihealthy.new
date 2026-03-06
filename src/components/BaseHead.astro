@@ -5,10 +5,69 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  /** 'article' 用於部落格文章，'website' 用於其他頁面 */
+  type?: 'article' | 'website';
+  /** 文章發布日期（ISO 字串），type='article' 時使用 */
+  publishedDate?: string;
+  /** 文章最後更新日期（ISO 字串），type='article' 時使用 */
+  updatedDate?: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const { title, description, image = '/favicon.svg' } = Astro.props;
+const {
+  title,
+  description,
+  image,
+  type = 'website',
+  publishedDate,
+  updatedDate,
+} = Astro.props;
+
+// OG image：優先使用傳入的 hero image，否則 fallback 為 logo
+const ogImage = image
+  ? new URL(image, Astro.site).toString()
+  : new URL('/favicon.svg', Astro.site).toString();
+
+// JSON-LD 結構化資料
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://ihealthy.com.tw';
+const organizationSchema = {
+  '@type': 'Organization',
+  name: 'iHealthy 生機實驗室',
+  url: siteUrl,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${siteUrl}/favicon.svg`,
+  },
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'iHealthy 生機實驗室',
+  url: siteUrl,
+  description: '實證健康知識站：飲食、保養、慢性病照護，用白話文說給你聽。',
+  inLanguage: 'zh-TW',
+  publisher: organizationSchema,
+};
+
+const articleSchema = type === 'article' ? {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: description,
+  image: ogImage,
+  datePublished: publishedDate,
+  dateModified: updatedDate ?? publishedDate,
+  author: organizationSchema,
+  publisher: organizationSchema,
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonicalURL.toString(),
+  },
+  inLanguage: 'zh-TW',
+} : null;
+
+const jsonLdData = articleSchema ?? websiteSchema;
 ---
 
 <!-- Global Metadata -->
@@ -24,17 +83,29 @@ const { title, description, image = '/favicon.svg' } = Astro.props;
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+<meta name="robots" content="index, follow" />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={type === 'article' ? 'article' : 'website'} />
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image, Astro.url)} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:locale" content="zh_TW" />
+<meta property="og:site_name" content="iHealthy 生機實驗室" />
+{type === 'article' && publishedDate && (
+  <meta property="article:published_time" content={publishedDate} />
+)}
+{type === 'article' && (updatedDate ?? publishedDate) && (
+  <meta property="article:modified_time" content={updatedDate ?? publishedDate} />
+)}
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image, Astro.url)} />
+<meta property="twitter:image" content={ogImage} />
+
+<!-- JSON-LD 結構化資料（供 Google AI Overview、Perplexity、ChatGPT 等 AI 搜尋引擎使用） -->
+<script type="application/ld+json" set:html={JSON.stringify(jsonLdData)} />

@@ -26,13 +26,19 @@ type Props = CollectionEntry<'blog'>;
 const post = Astro.props;
 const { Content, headings } = await post.render();
 
-// Estimate reading time (assuming ~300 words per minute for Chinese/English mix)
-// A rough estimation based on character count of the raw body
-const wordCount = post.body.length;
-const readingTime = Math.max(1, Math.ceil(wordCount / 300));
+// 閱讀時間估算：中文讀者平均 400–500 字/分鐘，取 450 並補正 MDX 語法開銷
+const rawLength = post.body.length;
+const readingTime = Math.max(1, Math.ceil(rawLength / 450));
 ---
 
-<Layout title={post.data.title} description={post.data.description}>
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  lcpImage={post.data.heroImage}
+  type="article"
+  publishedDate={post.data.pubDate.toISOString()}
+  updatedDate={post.data.updatedDate?.toISOString()}
+>
   <ReadingProgress targetSelector="#article-content" />
   
   <div class="max-w-4xl mx-auto mb-10 text-center px-4 sm:px-0 mt-8">
